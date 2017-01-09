@@ -27,6 +27,9 @@
 }
 
 /** Contacts **/
+.profile_link {
+  color: white;
+}
 .profile_details:nth-child(3n) {
   clear: both; }
 

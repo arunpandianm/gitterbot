@@ -1,93 +1,82 @@
+//Global declaration
 var API_Key = "ae28f23f134c4364ad45e7b7355cfa91c92038bb";
-var userList = [];
-var userlist_html = "";
+var _selectedGroup = "";
+var _roomId = "";
+var _topic = "";
+var _lastAccessTime = "";
+var _noOfUsers = 0;
+var _gitterRoomJsonData = [];
+var _userInfoJsonData = [];
+var _userList = [];
+var _userListHtml = "";
 
-//Gitter Room Name List Generation
 $(function(){
-  $.ajax({
-    type: 'GET',
-    url: 'https://api.gitter.im/v1/rooms?access_token=' + API_Key,
-    async: true,
-    dataType: 'json',
-    success: function(data){
-      for (var i = 0; i < data.length; i++) {
-        $('#gitterRoomList').append('<option>' + data[i]["name"] + '</option>');
-      }
-    },
-    error: function(xhr, textStatus, errorThrown) {
-
-    }
-  });
-});
-
-
-//Get Gitter Room Info
-$(function(){
-  $('#listUserButton').click(function(){
-    var selectedGroup = document.getElementById('selectedGroup').value;
-    //alert(selectedGroup);
-    //Find the User Count and groupId
-    var url = 'https://api.gitter.im/v1/rooms?access_token=' + API_Key;
-    var roomId = "";
-    var topic = "";
-    var lastAccessTime = "";
-    var noOfUsers = 0;
+  //Gitter Room Name List Generation
+  $('#getRoomName').click(function(){
     $.ajax({
-        type: 'GET',
-        url: url,
-        async: true,
-        dataType: 'json',
-        success: function(data) {
-            //Do stuff with the JSON data
-
-            for (var i = 0; i < data.length; i++) {
-                if (data[i]["name"] === selectedGroup) {
-                    roomId = data[i]["id"];
-                    noOfUsers = data[i]["userCount"];
-                    topic = data[i]["topic"];
-                    lastAccessTime = data[i]["lastAccessTime"];
-                    break;
-                }
-            }
-            $('groupName').append(selectedGroup);
-            $('topicDiscusion').append(topic);
-            $('userCount').append(noOfUsers);
-            $('lastAccessTime').append(lastAccessTime);
-        },
-        error: function(xhr, textStatus, errorThrown) {
+      type: 'GET',
+      url: 'https://api.gitter.im/v1/rooms?access_token=' + API_Key,
+      dataType: 'json',
+      success: function(data){
+        for (var i = 0; i < data.length; i++) {
+          $('#gitterRoomList').append('<option>' + data[i]["name"] + '</option>');
         }
-    });
+        $.merge(gitterRoomJsonData, data);
+      },
+      error: function(xhr, textStatus, errorThrown){
+        console.error();
+      }
+    });//end of getter room list ajax
+  });//end of #getRoomName
 
-    //find the members of group
-    var jsonData = [];
+  //Fetch users from selected group name
+  $('#listUserButton').click(function(){
+    //Get the user input
+    _selectedGroup = ('#selectedGroup').val();
+    for (var i = 0; i < gitterRoomJsonData.length; i++) {
+        if (gitterRoomJsonData[i]["name"] == _selectedGroup) {
+            _roomId = gitterRoomJsonData[i]["id"];
+            _noOfUsers = gitterRoomJsonData[i]["userCount"];
+            _topic = gitterRoomJsonData[i]["topic"];
+            _lastAccessTime = gitterRoomJsonData[i]["lastAccessTime"];
+            break;
+        }
+    }
+    $('#groupName').append('' + _selectedGroup + '');
+    $('#topicDiscusion').append('' + _topic + '');
+    $('#userCount').append('' + _noOfUsers + '');
+    $('#lastAccessTime').append('' + _lastAccessTime + '');
 
-    for (var i = 0; i < noOfUsers; i += 100) {
+
+    //Get the user list
+    //getData(_roomId, _noOfUsers);
+
+  });//end of #listUserButton
+
+});//end of main function
+
+function getData(_roomId, _noOfUsers) {
+    //get the user list from gitter room
+    for (var i = 0; i < _noOfUsers; i += 100) {
         $.ajax({
             type: 'GET',
-            url: 'https://api.gitter.im/v1/rooms/' + roomId + '/users?access_token=' + key + '&skip=' + i + '&limit=100',
-            async: true,
+            url: 'https://api.gitter.im/v1/rooms/' + _roomId + '/users?access_token=' + API_Key + '&skip=' + i + '&limit=100',
             dataType: 'json',
-            success: function(data) {
-                $.merge(jsonData, data);
+            success: function(data1) {
+                $.merge(_userInfoJsonData, data1);
                 },
             error: function(xhr, textStatus, errorThrown) {
                 }
         });
     }
-  getData(jsonData);
-});
-//End of click method
-});
 
-function getData(jsonData) {
-    var len = jsonData.length;
-    for (var i = 0; i < len; i++) {
-            userList.push({avatar: jsonData[i]["avatarUrlMedium"], name: jsonData[i]["displayName"], uname: jsonData[i]["username"], role: jsonData[i]["role"]});
+    for (var i = 0; i < _userInfoJsonData.length; i++) {
+            _userList.push({name: _userInfoJsonData[i]["displayName"], uname: _userInfoJsonData[i]["username"], role: _userInfoJsonData[i]["role"], id: _userInfoJsonData[i]["id"], avatar: _userInfoJsonData[i]["avatarUrlMedium"]});
         }
-        userlist_html += userList.map(function(a) {
+        _userListHtml += _userList.map(function(a) {
                 return dataFormatter(a.name, a.uname, a.role, a.id, a.avatar);
             }).join('');
-        $('#userList').append(userlist_html);
+        $('#userList').append(_userListHtml);
     }
 
 function dataFormatter(name, uname, role, id, urlmedium) {
