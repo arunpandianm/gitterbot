@@ -7,7 +7,7 @@ $(function(){
   $.ajax({
     type: 'GET',
     url: 'https://api.gitter.im/v1/rooms?access_token=' + API_Key,
-    async: true,
+    async: false,
     dataType: 'json',
     success: function(data){
       for (var i = 0; i < data.length; i++) {
@@ -19,7 +19,6 @@ $(function(){
     }
   });
 });
-
 
 //Get Gitter Room Info
 $(function(){
@@ -35,7 +34,7 @@ $(function(){
     $.ajax({
         type: 'GET',
         url: url,
-        async: true,
+        async: false,
         dataType: 'json',
         success: function(data) {
             //Do stuff with the JSON data
@@ -65,7 +64,7 @@ $(function(){
         $.ajax({
             type: 'GET',
             url: 'https://api.gitter.im/v1/rooms/' + roomId + '/users?access_token=' + key + '&skip=' + i + '&limit=100',
-            async: true,
+            async: false,
             dataType: 'json',
             success: function(data) {
                 $.merge(jsonData, data);
@@ -74,10 +73,10 @@ $(function(){
                 }
         });
     }
+
   getData(jsonData);
 });
 //End of click method
-});
 
 function getData(jsonData) {
     var len = jsonData.length;
