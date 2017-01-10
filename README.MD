@@ -12,6 +12,9 @@
 ## OPEN-SOURCE LINK
 [Click the Github link](https://github.com/arunpandianm/gitterbot)
 
+## HOSTED LINK
+[Click to View Demo](https://arunpandianm.github.io/gitterbot)
+
 ## CONTACT
 `Mail :` **arunpandianm04@gmail.com**
 
