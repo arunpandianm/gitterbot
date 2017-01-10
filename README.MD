@@ -10,7 +10,7 @@
 
 
 ## OPEN-SOURCE LINK
-[Click the Github link](https://www.github.com/arunpandianm)
+[Click the Github link](https://github.com/arunpandianm/gitterbot)
 
 ## CONTACT
 `Mail :` **arunpandianm04@gmail.com**
