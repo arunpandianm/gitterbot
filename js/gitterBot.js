@@ -14,7 +14,6 @@ var _noOfUsers = 0;
 $(function(){
 
   //Gitter Room Name List Generation
-  $('#getRoomName').click(function(){
     $.ajax({
       type: 'GET',
       url: 'https://api.gitter.im/v1/rooms?access_token=' + API_Key,
@@ -32,7 +31,7 @@ $(function(){
       }
     });//end of getter room list ajax
       //console.log(_gitterRoomJsonData);
-  });//end of #getRoomName
+
 
   //Fetch users from selected group name
   $('#listUserButton').click(function(){
